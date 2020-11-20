@@ -14,8 +14,8 @@
           <ion-button slot="end" @click="addPost">ADD</ion-button>
         </ion-item>
       </ion-toolbar>
-      <div v-if="result !== undefined">
-        <ion-item v-for="item in result['allPosts']" :key="item.id">
+      <div v-if="allPosts">
+        <ion-item v-for="item in allPosts" :key="item.id">
           <ion-label>
             {{ item.id }} {{ item.title }} ({{ item.views }})
             <div>{{ item.User.name }}</div></ion-label
@@ -36,10 +36,10 @@ import {
   IonLabel,
   IonItem,
   IonInput,
-  IonButton,
+  IonButton
 } from "@ionic/vue";
 import { defineComponent, ref } from "vue";
-import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useQuery, useMutation, useResult } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import { DocumentNode } from "graphql";
 
@@ -79,7 +79,7 @@ export default defineComponent({
     IonLabel,
     IonItem,
     IonInput,
-    IonButton,
+    IonButton
   },
   setup() {
     const title = ref<string>("");
@@ -87,11 +87,15 @@ export default defineComponent({
     // composable for querying all posts data
     const { result, error, loading, refetch } = useQuery(ALL_POST_QUERY);
 
+    // this cleans up the process of getting actual values without
+    // requiring use to always do `result.allPost`
+    const allPosts = useResult(result, null, data => data.allPosts);
+
     // composable for mutating the data / and update local cache
     const {
       loading: mLoading,
       error: mError,
-      mutate: createPost,
+      mutate: createPost
     } = useMutation(ADD_POST_MUTATION, {
       update: (
         cache: {
@@ -108,10 +112,13 @@ export default defineComponent({
         cache.writeQuery({ query: ALL_POST_QUERY, data });
         refetch();
         return data;
-      },
+      }
     });
 
-    const addPost = function () {
+    /**
+     *
+     */
+    const addPost = function() {
       const id = new Date().getTime() + "";
       const userId = 456;
       createPost({ title: title.value, id, userId });
@@ -121,11 +128,11 @@ export default defineComponent({
     return {
       loading: loading || mLoading,
       addPost,
-      result,
       error: error || mError,
       title,
+      allPosts
     };
-  },
+  }
 });
 </script>
 
