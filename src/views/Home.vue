@@ -39,9 +39,9 @@ import {
   IonButton
 } from "@ionic/vue";
 import { defineComponent, ref } from "vue";
-import { useQuery, useMutation, useResult } from "@vue/apollo-composable";
+import { useQuery, useResult } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { DocumentNode } from "graphql";
+import useMyMutation from "../use-mutation";
 
 const ALL_POST_QUERY = gql`
   query {
@@ -57,17 +57,6 @@ const ALL_POST_QUERY = gql`
   }
 `;
 
-// GRAPHQL MUTATION
-const ADD_POST_MUTATION = gql`
-  mutation createPost($title: String!, $id: ID!, $userId: ID!) {
-    createPost(title: $title, views: 0, user_id: $userId, id: $id) {
-      id
-      title
-      views
-      user_id
-    }
-  }
-`;
 export default defineComponent({
   name: "Home",
   components: {
@@ -92,43 +81,22 @@ export default defineComponent({
     const allPosts = useResult(result, null, data => data.allPosts);
 
     // composable for mutating the data / and update local cache
-    const {
-      loading: mLoading,
-      error: mError,
-      mutate: createPost
-    } = useMutation(ADD_POST_MUTATION, {
-      update: (
-        cache: {
-          readQuery: (arg0: { query: DocumentNode }) => any;
-          writeQuery: (arg0: { query: DocumentNode; data: any }) => void;
-        },
-        { data: { createPost } }: any
-      ) => {
-        // get posts from cache
-        const data = cache.readQuery({ query: ALL_POST_QUERY });
-        // add the new post
-        data.allPosts = [...data.allPosts, createPost];
-        // write results to cache
-        cache.writeQuery({ query: ALL_POST_QUERY, data });
-        refetch();
-        return data;
-      }
-    });
+    const m = useMyMutation(refetch);
 
     /**
      *
      */
-    const addPost = function() {
+    const addPost = () => {
       const id = new Date().getTime() + "";
       const userId = 456;
-      createPost({ title: title.value, id, userId });
+      m.createPost({ title: title.value, id, userId });
       title.value = "";
     };
 
     return {
-      loading: loading || mLoading,
+      loading: loading || m.loading,
       addPost,
-      error: error || mError,
+      error: error || m.error,
       title,
       allPosts
     };
