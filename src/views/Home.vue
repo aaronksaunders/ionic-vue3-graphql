@@ -80,7 +80,7 @@ export default defineComponent({
     // requiring use to always do `result.allPost`
     const allPosts = useResult(result, null, data => data.allPosts);
 
-    // composable for mutating the data / and update local cache
+    // custom composable for mutating the data / and updating local cache
     const m = useMyMutation(refetch);
 
     /**
