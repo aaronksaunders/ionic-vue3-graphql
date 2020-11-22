@@ -1,5 +1,7 @@
 # Ionic Framework VueJS GraphQL & Apollo-Composable
 
+See Video On YouTube - https://www.youtube.com/watch?v=FNL2ZS4iR5E
+
 In this project and video we are assuming you understand the basics of GraphQL, but are interested in how to use the Vue Composition API with GraphQL in VueJS
 
 <!-- <a href="https://www.youtube.com/watch?v=MNxgQ4Ba7S8">
