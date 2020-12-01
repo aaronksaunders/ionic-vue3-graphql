@@ -1,3 +1,4 @@
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W31U7HM)
 # Ionic Framework VueJS GraphQL & Apollo-Composable
 
 See Video On YouTube - https://www.youtube.com/watch?v=FNL2ZS4iR5E
